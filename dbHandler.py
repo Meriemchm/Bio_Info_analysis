@@ -7,7 +7,7 @@ class Handler:
             self.data = json.load(file)
     
     def count_sequences_per_year(self):
-        # Dictionnaire pour stocker le nombre de séquences par année
+        ''' Dictionnaire pour stocker le nombre de séquences par année'''
         sequences_per_year = defaultdict(int)
         
         for variant, years in self.data.items():
@@ -17,7 +17,7 @@ class Handler:
         return dict(sequences_per_year)
     
     def calculate_sequence_lengths(self):
-        # Dictionnaire pour stocker les longueurs de séquences par variant et par année
+        ''' Dictionnaire pour stocker les longueurs de séquences par variant et par année'''
         sequence_lengths = {}
         
         for variant, years in self.data.items():
@@ -28,7 +28,7 @@ class Handler:
         return sequence_lengths
     
     def calculate_base_percentages(self):
-        # Dictionnaire pour stocker les pourcentages de A, T, C, G par variant et par année
+        ''' Dictionnaire pour stocker les pourcentages de A, T, C, G par variant et par année'''
         base_percentages = {}
         
         for variant, years in self.data.items():
@@ -52,7 +52,7 @@ class Handler:
         return base_percentages
     
     def display_statistics(self):
-        # Afficher toutes les statistiques
+        ''' Afficher toutes les statistiques'''
         print("Nombre de séquences par année:", self.count_sequences_per_year())
         print("\nLongueur des séquences par variant et année:", self.calculate_sequence_lengths())
         print("\nPourcentages de bases par variant, année et séquence:", self.calculate_base_percentages())
