@@ -213,9 +213,17 @@ class AlignmentHandler:
 
         # Aligner les deux premières séquences
         alignments, score_align = self.global_alignment(sequences[first], sequences[second])
+
+        if alignments:
+            aligned1, aligned2 = alignments[0]  # Toujours prendre le premier
+            #print(aligned)
+        else:
+            raise ValueError("No valid alignments found between sequences.")
+        
+
         print("les premiers alignements")
         print(alignments)
-        aligned1, aligned2 = alignments[0]
+        #aligned1, aligned2 = aligned[0]
         print("aligned1 : ")
         print(aligned1)
         print("aligned2 : ")
@@ -252,9 +260,9 @@ class AlignmentHandler:
         return aligned_sequences
 
 # Exemple d'utilisation :
-#alignment_handler = AlignmentHandler()
-#sequences = ["ACTGG", "ACTTGG", "ACTGC", "CTTG"]  # Exemple de séquences
-#aligned = alignment_handler.progressive_alignment(sequences)
+alignment_handler = AlignmentHandler()
+sequences = ["ACTGG", "ACTTGG", "ACTGC", "CTTG"]  # Exemple de séquences
+aligned = alignment_handler.progressive_alignment(sequences)
 
-#for seq in aligned:
-#    print(seq)
+for seq in aligned:
+    print(seq)
