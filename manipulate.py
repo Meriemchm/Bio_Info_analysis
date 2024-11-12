@@ -18,7 +18,7 @@ except FileNotFoundError:
 for variant_name in variants:
     print(f"Traitement du variant : {variant_name}")
     variant_path = os.path.join(database_dir, variant_name)
-    data[variant_name] = {}  # Initialiser le dictionnaire pour chaque variant
+    data[variant_name] = {}  
     
     # Parcourir les sous-dossiers (années) dans chaque variant
     try:
@@ -30,7 +30,7 @@ for variant_name in variants:
     for year in years:
         print(f"  Traitement de l'année : {year}")
         year_path = os.path.join(variant_path, year)
-        sequences = {}  # Stocker les séquences pour chaque année
+        sequences = {}  
         
         try:
             # Parcourir chaque fichier dans le dossier de l'année
@@ -58,10 +58,9 @@ for variant_name in variants:
         except Exception as e:
             print(f"Une erreur inattendue est survenue avec '{file_name}': {e}")
         
-        # Ajouter les séquences de l'année au variant
         data[variant_name][year] = sequences
 
-# Enregistrement dans un fichier JSON
+# Enregistrement 
 try:
     with open(output_json, "w") as json_file:
         json.dump(data, json_file, indent=4)
