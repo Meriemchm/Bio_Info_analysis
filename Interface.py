@@ -87,9 +87,12 @@ class AlignmentGUI:
 
         self.clear_button = tk.Button(self.root, text="Clear", command=self.clear_fields)
         self.clear_button.grid(row=11, column=1, columnspan=2, pady=10)  # Utilisation de grid ici aussi
+
+        #self.score_button = ttk.Button(self.root, text="Lancer l'alignement", command=self.run_alignment)
+        #self.score_button.grid(row=12, column=0, columnspan=2, pady=10)
         # Zone pour afficher les résultats
         self.result_text = tk.Text(self.root, height=15, width=60)
-        self.result_text.grid(row=12, column=0, columnspan=2, pady=10, padx=10)
+        self.result_text.grid(row=13, column=0, columnspan=2, pady=10, padx=10)
 
     def update_years1(self, event):
         variant = self.variant1_combobox.get()
@@ -147,11 +150,13 @@ class AlignmentGUI:
 
         self.display_results(alignments, score)
 
+
     def display_results(self, alignments, score):
         self.result_text.delete(1.0, tk.END)
-        self.result_text.insert(tk.END, f"Score d'alignement : {score}\n\n")
+        self.result_text.insert(tk.END, f"Score de la matrice : {score}\n\n")
         for align1, align2 in alignments:
-            self.result_text.insert(tk.END, f"{align1}\n{align2}\n\n")
+            score_alignement = self.alignment_handler.calculate_score(align1, align2)
+            self.result_text.insert(tk.END, f"{align1}\n{align2}\n score d'alignement: {score_alignement}\n\n")
 
     def clear_fields(self):
         """Effacer les champs de texte et autres éléments"""
