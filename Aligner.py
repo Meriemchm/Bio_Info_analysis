@@ -4,7 +4,7 @@ from itertools import combinations
 from collections import defaultdict
 
 class AlignmentHandler:
-    def __init__(self, match=1, mismatch=-1, gap=-2):
+    def __init__(self, match=2, mismatch=-1, gap=-1):
         self.match = match
         self.mismatch = mismatch
         self.gap = gap
@@ -31,7 +31,13 @@ class AlignmentHandler:
         max_value = max(diag, up, left)
 
         if max_value == diag:
-            self.explore_alignments(i - 1, j - 1, seq1[i - 2] + current_align1, seq2[j - 2] + current_align2,alignments,score_matrix,seq1,seq2)
+            if i>1 and j>1 :
+        
+                    self.explore_alignments(i - 1, j - 1, seq1[i -2] + current_align1, seq2[j -2] + current_align2,alignments,score_matrix,seq1,seq2)
+            elif j<1 : 
+                self.explore_alignments(i - 1, j - 1, seq1[i -2] + current_align1, '-' + current_align2,alignments,score_matrix,seq1,seq2)
+            elif i<1:
+                self.explore_alignments(i - 1, j - 1, '-' + current_align1, seq2[j -2] + current_align2,alignments,score_matrix,seq1,seq2)
         if max_value == up:
             self.explore_alignments(i - 1, j, seq1[i - 2] + current_align1, '-' + current_align2,alignments,score_matrix,seq1,seq2)
         if max_value == left:
@@ -89,7 +95,7 @@ class AlignmentHandler:
         #for row in score_matrix:
         #    print(row)    
         
-        return alignments, score_matrix[n - 1][m - 1]
+        return alignments, score_matrix[n - 1][m - 1],score_matrix
 
     def local_alignment(self, seq1, seq2):
         n = len(seq1) + 1
@@ -147,9 +153,9 @@ class AlignmentHandler:
         
         #print("Matrice de score :")
         #for row in score_matrix:
-        #    print(row)
+            #print(row)
         
-        return alignments, score_final
+        return alignments, score_final,score_matrix
 
 
     def calculate_score(self, align1, align2):
@@ -163,20 +169,14 @@ class AlignmentHandler:
                 score += self.mismatch
         return score
     
-    
+        
 
     def calculate_distance(self, seq1, seq2):
         """
-        Calcule la distance entre deux séquences en comptant le nombre de différences
-        caractère par caractère jusqu'à la longueur de la séquence la plus courte.
-        Les caractères restants de la séquence la plus longue sont ignorés.
+        Calcule la distance entre deux séquences.
         """
-        # Longueur minimale des deux séquences
         min_len = min(len(seq1), len(seq2))
-        
-        # Comparer caractère par caractère jusqu'à la longueur minimale
         differences = sum(1 for a, b in zip(seq1[:min_len], seq2[:min_len]) if a != b)
-        
         return differences
 
     def compute_distance_matrix(self, sequences):
@@ -190,11 +190,13 @@ class AlignmentHandler:
                 distance_matrix[i][j] = distance
                 distance_matrix[j][i] = distance
 
-        print(distance_matrix)
+        print("Matrice des distances :")
+        for row in distance_matrix:
+            print(row)
         return distance_matrix
 
     def progressive_alignment(self, sequences):
-        """Effectue un alignement multiple progressif basé sur la matrice des distances."""
+        """Effectue un alignement multiple progressif."""
         n = len(sequences)
         distance_matrix = self.compute_distance_matrix(sequences)
 
@@ -211,36 +213,38 @@ class AlignmentHandler:
                     min_distance = distance_matrix[i][j]
                     first, second = i, j
 
+        print(f"Les deux séquences les plus proches : {first}, {second} avec une distance de {min_distance}")
+
         # Aligner les deux premières séquences
-        alignments, score_align = self.global_alignment(sequences[first], sequences[second])
+        alignments, score_align, score_matrix = self.global_alignment(sequences[first], sequences[second])
+        alignments_with_scores = []
+        for align1, align2 in alignments:
+            score_alignement = self.calculate_score(align1, align2)
+            alignments_with_scores.append((align1, align2, score_alignement))
+        alignments_with_scores.sort(key=lambda x: x[2], reverse=True)
 
         if alignments:
-            aligned1, aligned2 = alignments[0]  # Toujours prendre le premier
-            #print(aligned)
+            aligned1, aligned2, score_alignement = alignments_with_scores[0]
         else:
             raise ValueError("No valid alignments found between sequences.")
-        
 
-        print("les premiers alignements")
+        print("Les premiers alignements :")
         print(alignments)
-        #aligned1, aligned2 = aligned[0]
-        print("aligned1 : ")
-        print(aligned1)
-        print("aligned2 : ")
-        print(aligned2)
-        #aligned_sequences.extend([(first, aligned1), (second, aligned2)])
+        print(f"Alignement retenu :\n{aligned1}\n{aligned2}\nScore : {score_alignement}")
+
         aligned_sequences.extend([aligned1, aligned2])
-        print("aligned séquences for now :")
-        print(aligned_sequences)
         unaligned_indices.remove(first)
         unaligned_indices.remove(second)
-        print("les indices qui restent : ")
+
+        print("Séquences alignées après la première étape :")
+        print(aligned_sequences)
+        print("Indices restants :")
         print(unaligned_indices)
 
         # Étape 2 : Ajouter les autres séquences progressivement
         while unaligned_indices:
+            print(f"\nÉtape suivante, séquences restantes : {unaligned_indices}")
             best_candidate = None
-            best_alignment = None
             min_distance = float('inf')
 
             for i in unaligned_indices:
@@ -250,14 +254,34 @@ class AlignmentHandler:
                         min_distance = distance
                         best_candidate = i
 
+            print(f"Meilleur candidat trouvé : {best_candidate} avec une distance minimale de {min_distance}")
+
             if best_candidate is not None:
-                # Align only once after finding the best candidate
-                alignments, score_align = self.global_alignment(sequences[best_candidate], aligned_sequences[0])
-                aligned1, aligned2 = alignments[0]
+                # Alignement entre la séquence non alignée et une séquence alignée
+                alignments, score_align, score_matrix = self.global_alignment(sequences[best_candidate], aligned_sequences[0])
+                alignments_with_scores_two = []
+                for align1, align2 in alignments:
+                    score_alignement = self.calculate_score(align1, align2)
+                    alignments_with_scores_two.append((align1, align2, score_alignement))
+                alignments_with_scores_two.sort(key=lambda x: x[2], reverse=True)
+
+                aligned1, aligned2, score_alignement = alignments_with_scores_two[0]
+                print(f"Alignement retenu pour {sequences[best_candidate]} avec la séquence alignée :\n{aligned_sequences[0]}\n{aligned1}\nScore : {score_alignement}")
                 aligned_sequences.append(aligned1)
                 unaligned_indices.remove(best_candidate)
 
+            print("Séquences alignées actuellement :")
+            print(aligned_sequences)
+            print("Indices restants :")
+            print(unaligned_indices)
+
+        print("\nAlignement final :")
+
+        print(aligned_sequences[len(sequences):])
+
         return aligned_sequences
+
+
 
 # Exemple d'utilisation :
 alignment_handler = AlignmentHandler()

@@ -144,19 +144,35 @@ class AlignmentGUI:
 
 
         if align_type == "global":
-            alignments, score = self.alignment_handler.global_alignment(seq1, seq2)
+            alignments, score,score_matrix = self.alignment_handler.global_alignment(seq1, seq2)
         else:
-            alignments, score = self.alignment_handler.local_alignment(seq1, seq2)
+            alignments, score,score_matrix = self.alignment_handler.local_alignment(seq1, seq2)
 
-        self.display_results(alignments, score)
+        self.display_results(alignments, score,score_matrix)
 
 
-    def display_results(self, alignments, score):
+    def display_results(self, alignments, score,score_matrix):
         self.result_text.delete(1.0, tk.END)
+        self.result_text.insert(tk.END, f"matrix:\n")
+        for row in score_matrix:
+            self.result_text.insert(tk.END, f"{row}\n")    
         self.result_text.insert(tk.END, f"Score de la matrice : {score}\n\n")
+        # Calculer tous les scores et les stocker dans une liste
+        alignments_with_scores = []
+
         for align1, align2 in alignments:
             score_alignement = self.alignment_handler.calculate_score(align1, align2)
-            self.result_text.insert(tk.END, f"{align1}\n{align2}\n score d'alignement: {score_alignement}\n\n")
+            alignments_with_scores.append((align1, align2, score_alignement))
+
+        # Trier les alignements par score décroissant
+        alignments_with_scores.sort(key=lambda x: x[2], reverse=True)
+
+        # Afficher les alignements triés
+        for align1, align2, score_alignement in alignments_with_scores:
+            self.result_text.insert(
+                tk.END,
+                f"{align1}\n{align2}\n score d'alignement: {score_alignement}\n\n"
+            )
 
     def clear_fields(self):
         """Effacer les champs de texte et autres éléments"""
@@ -176,7 +192,7 @@ class AlignmentGUI:
 # Utilisation
 if __name__ == "__main__":
     json_path = "Sars-cov-2.json"
-    alignment_handler = AlignmentHandler(match=2, mismatch=-1, gap=-2)
+    alignment_handler = AlignmentHandler(match=2, mismatch=-1, gap=-1)
 
     root = tk.Tk()
     app = AlignmentGUI(root, json_path, alignment_handler)
