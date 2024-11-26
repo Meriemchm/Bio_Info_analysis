@@ -1,5 +1,6 @@
 import json
 from collections import defaultdict
+import random
 
 class Handler:
     def __init__(self, json_path):
@@ -57,4 +58,47 @@ class Handler:
         print("\nLongueur des séquences par variant et année:", self.calculate_sequence_lengths())
         print("\nPourcentages de bases par variant, année et séquence:", self.calculate_base_percentages())
 
+    def choisir_sequences_random(self):
+        toutes_les_sequences = []
+        for variant, annees in self.data.items():
+            for annee, sequences in annees.items():
+                for seq_id, details in sequences.items():
+                    toutes_les_sequences.append({
+                        "id": seq_id,
+                        "variant": variant,
+                        "annee": annee,
+                        "longueur": details["longueur"],
+                        "séquence": details["séquence"]
+                    })
+
+        sequences_uniques = list({seq["séquence"]: seq for seq in toutes_les_sequences}.values())
+
+        if len(sequences_uniques) < 3:
+            print("Pas assez de séquences uniques pour en choisir trois.")
+            return []
+
+        sequences_choisies = random.sample(sequences_uniques, 3)
+        tableau_sequences = []
+        
+        for seq in sequences_choisies:
+            # Extraire une sous-séquence avec un intervalle de 20 à 35 et une longueur aléatoire entre 10 et 15
+            sequence_extraite = seq["séquence"][random.randint(20, 35): random.randint(20, 35) + random.randint(10, 15)]
+            
+            # Vérifier si la séquence est vide ou trop courte, et générer une nouvelle séquence si nécessaire
+            while len(sequence_extraite) < 5 or sequence_extraite == '':
+                print("Séquence vide ou trop courte trouvée, génération d'une nouvelle séquence.")
+                sequence_extraite = seq["séquence"][random.randint(20, 25): random.randint(20, 25) + random.randint(10, 15)]
+            
+            tableau_sequences.append(sequence_extraite)
+
+        print("Séquences choisies :")
+        for i, seq in enumerate(sequences_choisies, start=1):
+            print(f"  Séquence {i}:")
+            print(f"    ID : {seq['id']}")
+            print(f"    Variant : {seq['variant']}")
+            print(f"    Année : {seq['annee']}")
+            print(f"    Longueur : {seq['longueur']}")
+            print(f"    Séquence : {seq['séquence']}\n")
+
+        return tableau_sequences
 
