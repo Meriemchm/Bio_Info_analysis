@@ -81,10 +81,10 @@ class Handler:
         tableau_sequences = []
         
         for seq in sequences_choisies:
-            # Extraire une sous-séquence avec un intervalle de 20 à 35 et une longueur aléatoire entre 10 et 15
+
             sequence_extraite = seq["séquence"][random.randint(20, 35): random.randint(20, 35) + random.randint(10, 15)]
             
-            # Vérifier si la séquence est vide ou trop courte, et générer une nouvelle séquence si nécessaire
+   
             while len(sequence_extraite) < 5 or sequence_extraite == '':
                 print("Séquence vide ou trop courte trouvée, génération d'une nouvelle séquence.")
                 sequence_extraite = seq["séquence"][random.randint(20, 25): random.randint(20, 25) + random.randint(10, 15)]
