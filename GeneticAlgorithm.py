@@ -14,20 +14,20 @@ class GeneticAlgorithm():
 
         first, second = parents[0], parents[1]
 
-        n_size1 = len(first) 
-        n_size2 = len(second)
+        m = len(first) 
+        m2 = len(second)
 
-        n_max = max(n_size1, n_size2)
+        n_max = max(m, m2)
         align = []
         for i in range(n_max):
             n = np.random.choice([True, False])
-            if i < n_size1 and n:
+            if i < m and n:
                 align.append(first[i])
-            elif i < n_size2 and not n:
+            elif i < m2 and not n:
                 align.append(second[i])
             else:
 
-                if i < n_size1:
+                if i < m:
                     align.extend(first[i:])
                     break
                 else:
@@ -40,8 +40,10 @@ class GeneticAlgorithm():
         if np.random.choice([True,False],p=[self.mutation,1-self.mutation]):
             p_size = len(seq)
             start = np.random.randint(0,p_size)
+            #print('start : ',start)
             choices = np.random.choice(['A','G',"T","C","-"],size=5)
             mutat = "".join(choices)
+            #print(mutat)
 
             #print('seq',seq)
             seq = seq[:start]+mutat+seq[start+5:]
