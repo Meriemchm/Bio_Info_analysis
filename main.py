@@ -16,11 +16,11 @@ alignment_handler = AlignmentHandler(visualize)
 
 
 #---------------------test genetic---------------------------
-model = GeneticAlgorithm(AlignmentHandler,resultat)
-aligned = model.processing(15)
-print('les scores obtenu : ',aligned[0])
-print('meilleure parents : ',aligned[1])
-print('meilleure score atteint : ',aligned[2])
+# model = GeneticAlgorithm(AlignmentHandler,resultat)
+# aligned = model.processing(15)
+# print('les scores obtenu : ',aligned[0])
+# print('meilleure parents : ',aligned[1])
+# print('meilleure score atteint : ',aligned[2])
 
 
 #---------------------ClustalW---------------------------
@@ -32,7 +32,6 @@ print('meilleure score atteint : ',aligned[2])
 
 #---------------------Upgma---------------------------
 
-# # alignment_handler.NJ_processing(sequences)
 # aligned = alignment_handler.upgma_processing(resultat)
 # print('aligned sequences : ')
 # for seq in aligned:
@@ -40,7 +39,4 @@ print('meilleure score atteint : ',aligned[2])
 
 #---------------------NJ---------------------------
 
-# aligned = alignment_handler.NJ_processing(resultat)
-# print('aligned sequences : ')
-# for seq in aligned:
-#     print(seq)
+alignment_handler.NJ_processing(resultat)

@@ -351,13 +351,12 @@ class AlignmentHandler:
         for i, row in enumerate(matrix):
             print(f"{labels[i]:<3} {row}")
 
-    # nvl matrice apr regroupement
-    def upgma(self,matrix, data_a, data_b, new_label, labels):
+    def upgma(self, matrix, data_a, data_b, new_label, labels):
         new_matrix = []
         new_labels = [label for i, label in enumerate(labels) if i not in (data_a, data_b)]
         new_labels.append(new_label)
         
-        # nvl matrice de distances
+        # Nvelle matrice de distances
         for i in range(len(matrix)):
             if i in (data_a, data_b):
                 continue
@@ -368,31 +367,32 @@ class AlignmentHandler:
                 new_row.append(matrix[i][j])
             new_matrix.append(new_row)
         
-        # new data cl , rw
+        # Calcul des distanceclusters
         new_data_distances = []
         for i in range(len(matrix)):
             if i not in (data_a, data_b):
                 dist = (matrix[i][data_a] + matrix[i][data_b]) / 2
                 new_data_distances.append(dist)
-        new_data_distances.append(0)  # dist luimme 0
+        new_data_distances.append(0)  # lui-même est 0
         
         for i, row in enumerate(new_matrix):
             row.append(new_data_distances[i])
         new_matrix.append(new_data_distances)
         
-        
+
         new_matrix = np.array(new_matrix)
         return new_matrix, new_labels
 
-    def upgma_processing(self,sequences):
+    def upgma_processing(self, sequences):
         
         dist_matrix = self.compute_distance_matrix(sequences)
         labels = [f"I{i+1}" for i in range(len(sequences))]
         step = 1
-        while len(dist_matrix) > 1:
 
-            print('len dist ',len(dist_matrix))
-            # deux dataproches
+        branch_distances = {}  
+        
+        while len(dist_matrix) > 1:
+            #  plus proches
             min_dist = float("inf")
             cluster_a, cluster_b = -1, -1
             for i in range(len(dist_matrix)):
@@ -401,15 +401,23 @@ class AlignmentHandler:
                         min_dist = dist_matrix[i][j]
                         cluster_a, cluster_b = i, j
             
-            # Afficheage
+            
             print(f"\nÉtape {step} : Regrouper {labels[cluster_a]} et {labels[cluster_b]} (distance = {min_dist})")
             new_label = f"({labels[cluster_a]},{labels[cluster_b]})"
+            
+            branch_distance = min_dist / 2
+            branch_distances[new_label] = branch_distance
+            print(f"Distance de branche pour {new_label} = {branch_distance}")
+            
             dist_matrix, labels = self.upgma(dist_matrix, cluster_a, cluster_b, new_label, labels)
             self.print_distance_matrix(dist_matrix, labels)
             step += 1
 
         print("\nClustering terminé!")
         print(labels[0])
+        print("\nDistances des branches :")
+        for cluster, dist in branch_distances.items():
+            print(f"{cluster} : {dist}")
         self.visualize.tree_vis(labels[0])
 
 
