@@ -101,4 +101,50 @@ class Handler:
             print(f"    Séquence : {seq['séquence']}\n")
 
         return tableau_sequences
+    
+    def get_sequences_by_variant_and_year(self, variant, year):
+        """
+        Récupère toutes les séquences pour un variant donné et une année donnée.
+        
+        :param variant: Le nom du variant à rechercher.
+        :param year: L'année à rechercher.
+        :return: Un dictionnaire contenant les séquences ou un message si aucun résultat n'est trouvé.
+        """
+        if variant not in self.data:
+            return f"Variant '{variant}' introuvable dans les données."
+        
+        if year not in self.data[variant]:
+            return f"Aucune séquence trouvée pour le variant '{variant}' en {year}."
+        
+        # Récupérer toutes les séquences pour ce variant et cette année
+        sequences = self.data[variant][year]
+        return {seq_id: details["séquence"] for seq_id, details in sequences.items()}
+    
+    def export_to_fasta(self, variant, output_fasta, year=None):
+        """
+        Exporte les séquences d'un variant donné (et éventuellement une année spécifique)
+        dans un fichier FASTA.
+        """
+        if variant not in self.data:
+            print(f"Variant '{variant}' introuvable dans les données.")
+            return
+
+        sequences = []
+        for year_key, seq_data in self.data[variant].items():
+            if year and year_key != str(year):
+                continue  # Ignore les années non sélectionnées
+            for seq_id, details in seq_data.items():
+                sequences.append((seq_id, details["séquence"]))
+
+        if not sequences:
+            print("Aucune séquence trouvée pour ce variant et cette année.")
+            return
+
+        # Écrire les séquences dans un fichier FASTA
+        with open(output_fasta, "w") as fasta_file:
+            for seq_id, sequence in sequences:
+                print(f"Écriture de {seq_id} dans le fichier")
+                fasta_file.write(f">{seq_id}\n{sequence}\n")
+
+        print(f"Fichier FASTA '{output_fasta}' généré avec succès.")
 

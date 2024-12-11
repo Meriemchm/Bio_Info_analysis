@@ -285,7 +285,7 @@ class AlignmentHandler:
         """
         guide_tree = self.construct_guide_tree(sequences)
         print(guide_tree)
-        self.visualize.visualize_tree(guide_tree)
+        #self.visualize.visualize_tree(guide_tree)
         aligned_sequences = {} 
         final_alignments= [] 
 
@@ -418,7 +418,7 @@ class AlignmentHandler:
         print("\nDistances des branches :")
         for cluster, dist in branch_distances.items():
             print(f"{cluster} : {dist}")
-        self.visualize.tree_vis(labels[0])
+        #self.visualize.tree_vis(labels[0])
 
 
     # R_i 
@@ -510,7 +510,7 @@ class AlignmentHandler:
 
         print("\nClustering terminé!")
         print(labels[0])
-        self.visualize.tree_vis(labels[0])
+        #self.visualize.tree_vis(labels[0])
 
 # visualize = Visualize()
 # alignment_handler = AlignmentHandler(visualize)

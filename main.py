@@ -3,16 +3,17 @@ import os
 from Aligner import AlignmentHandler  
 from GeneticAlgorithm import GeneticAlgorithm
 from visualize import Visualize
+from DataStats import DataStats
 json_path = os.path.join(os.path.dirname(__file__), "Sars-cov-2.json")
 
 handler = Handler(json_path)
 
-resultat =handler.choisir_sequences_random()
+#resultat =handler.choisir_sequences_random()
 
-print("\nTableau des séquences choisies :")
-print(resultat)
+#print("\nTableau des séquences choisies :")
+#print(resultat)
 visualize = Visualize()
-alignment_handler = AlignmentHandler(visualize)
+#alignment_handler = AlignmentHandler(visualize)
 
 
 #---------------------test genetic---------------------------
@@ -39,4 +40,16 @@ alignment_handler = AlignmentHandler(visualize)
 
 #---------------------NJ---------------------------
 
-alignment_handler.NJ_processing(resultat)
+#alignment_handler.NJ_processing(resultat)
+
+#---------------------- Data Stats ------------
+
+alignment_handler = AlignmentHandler(visualize)
+data_stats = DataStats(handler, alignment_handler, GeneticAlgorithm, visualize)
+
+variant = "Variant Beta"
+year = "2022"
+data_stats.run_tests(variant, year, num_sequences=3)
+
+output_csv = os.path.join(os.path.dirname(__file__), "alignment_performance.csv")
+data_stats.export_performances(output_csv)
