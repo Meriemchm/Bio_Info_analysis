@@ -15,15 +15,6 @@ class DataStats:
         self.clustalw_path = clustalw_path
 
     def measure_performance(self, sequences, method_name, variant):
-        """
-        Comprehensive performance measurement for alignment methods.
-        
-        :param function: Function to execute
-        :param sequences: Input sequences
-        :param method_name: Name of the alignment method
-        :param variant: Virus variant
-        :return: Performance metrics dictionary
-        """
         process = psutil.Process()
         
         # Prepare temporary fasta file for ClustalW input
@@ -100,23 +91,11 @@ class DataStats:
             return None
 
     def _calculate_gap_percentage(self, aligned_sequences):
-        """
-        Calculate the percentage of gaps in the alignment.
-        
-        :param aligned_sequences: List of aligned sequences
-        :return: Percentage of gaps
-        """
         total_chars = sum(len(seq) for seq in aligned_sequences)
         total_gaps = sum(seq.count('-') for seq in aligned_sequences)
         return (total_gaps / total_chars) * 100 if total_chars > 0 else 0
 
     def _calculate_conservation_score(self, aligned_sequences):
-        """
-        Calculate a simple conservation score based on column-wise conservation.
-        
-        :param aligned_sequences: List of aligned sequences
-        :return: Conservation score (0-1)
-        """
         if not aligned_sequences:
             return 0
 
@@ -161,17 +140,6 @@ class DataStats:
         
 
     def run_comprehensive_tests(self, variants, years, methods, num_sequences=3, start=0, end=5):
-        """
-        Run performance tests for multiple variants, years, and methods.
-        
-        :param variants: List of variants to test
-        :param years: List of years to test
-        :param methods: List of alignment methods to test
-        :param num_sequences: Number of sequences to test
-        :param start: Start index of the sequence portion to use
-        :param end: End index of the sequence portion to use
-        :return: Combined DataFrame of results
-        """
         all_results = []
 
         for variant in variants:

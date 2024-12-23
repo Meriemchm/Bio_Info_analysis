@@ -9,7 +9,6 @@ class AlignmentGUI:
         self.json_path = json_path
         self.alignment_handler = alignment_handler
         self.data = self.load_data()
-
         self.create_widgets()
 
     def load_data(self):

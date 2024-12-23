@@ -176,6 +176,7 @@ class AlignmentHandler:
 
     def pair_par_pair(self, sequences,align='matrix', method='global'):
         n = len(sequences)
+        print("Sequences a aligner : ",sequences)
         alignment_scores = [[0] * n for _ in range(n)]
         alignement_best = []
 
@@ -193,6 +194,7 @@ class AlignmentHandler:
                     #retourne alignement a la pace de la matrice
                     if align != 'matrix':
                         new_align = alignments_with_scores[0] 
+                        
                         current_score = new_align[2]
                         # print(alignement_best)
                         if len(alignement_best) !=0:
@@ -204,7 +206,8 @@ class AlignmentHandler:
                             alignement_best.append(new_align)
 
                     else :
-                        print(alignments_with_scores[0])        
+                        print(alignments_with_scores[0])
+
                 elif method == 'local':
                     alignement, score,_ = self.local_alignment(sequences[i], sequences[j])
                     alignments_with_scores = []
@@ -237,24 +240,10 @@ class AlignmentHandler:
             # max
             max_dist = float('-inf')
             max_pair = None
-
             for i in data:
-                print(i)
-                
                 for j in data:
-                   
                     if i < j:
-                        print(data[i],data[j] )
-                        for x in data[i] :
-                            for y in data[j]:
-                                print(x,y)
-                                print(distance_matrix[x][y])
-                        print("--------")   
-                        distmean = np.mean([distance_matrix[x][y] for x in data[i] for y in data[j]])     
                         dist = max([distance_matrix[x][y] for x in data[i] for y in data[j]])
-                        print(dist,distmean)
-                        print("--------") 
-
                         if dist > max_dist: 
                             max_dist = dist
                             max_pair = (i, j)
@@ -262,10 +251,7 @@ class AlignmentHandler:
             # Fusionner 
             i, j = max_pair
             new_data = data[i] + data[j]
-            print(new_data)
-            
             guide_tree.append((data[i], data[j]))
-            print(guide_tree)
 
             # Supprime add data
             del data[i]
@@ -301,8 +287,8 @@ class AlignmentHandler:
             for align1, align2 in alignments:
                 score_alignement = self.calculate_score(align1, align2)
                 alignments_with_scores.append((align1, align2, score_alignement))
-
             alignments_with_scores.sort(key=lambda x: x[2], reverse=True)
+
             align1, align2 = alignments_with_scores[0][0], alignments_with_scores[0][1]
             if step == 0 :
                     final_alignments.append(align1)
@@ -330,6 +316,7 @@ class AlignmentHandler:
 
     def compute_distance_matrix(self, sequences):
         """Construit une matrice des distances entre toutes les séquences."""
+        print('Sequences : ',sequences)
         n = len(sequences)
         distance_matrix = [[0] * n for _ in range(n)]
 
@@ -418,7 +405,7 @@ class AlignmentHandler:
         print("\nDistances des branches :")
         for cluster, dist in branch_distances.items():
             print(f"{cluster} : {dist}")
-        #self.visualize.tree_vis(labels[0])
+        self.visualize.tree_vis(labels[0])
 
 
     # R_i 
@@ -510,7 +497,7 @@ class AlignmentHandler:
 
         print("\nClustering terminé!")
         print(labels[0])
-        #self.visualize.tree_vis(labels[0])
+        self.visualize.tree_vis(labels[0])
 
 # visualize = Visualize()
 # alignment_handler = AlignmentHandler(visualize)

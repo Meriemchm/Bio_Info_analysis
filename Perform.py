@@ -21,10 +21,10 @@ def main():
         plt.figure(figsize=(10, 6))
         for method in df['Method'].unique():
             subset = df[df['Method'] == method]
-            plt.plot(subset['Year'], subset['Execution Time (s)'], marker='o', label=method)
+            plt.plot(subset['Execution Time (s)'], marker='o', label=method)
 
         plt.title('Temps d\'exécution par méthode et par année')
-        plt.xlabel('Année')
+        #plt.xlabel('Année')
         plt.ylabel('Temps d\'exécution (secondes)')
         plt.legend(title="Méthode")
         plt.grid(True)
@@ -35,7 +35,7 @@ def main():
         plt.figure(figsize=(10, 6))
         for method in df['Method'].unique():
             subset = df[df['Method'] == method]
-            plt.bar(subset['Year'], subset['Memory Used (MB)'], label=method)
+            plt.bar( subset['Memory Used (MB)'], marker='o',label=method)
 
         plt.title('Mémoire utilisée par méthode et par année')
         plt.xlabel('Année')
@@ -73,7 +73,8 @@ def main():
     #variant = "Variant Beta"  
     #year = "2024"      
 
-    variants = ["Variant Alpha", "Variant Beta", "Variant Gamma", "Variant Delta"]
+    #variants = ["Variant Alpha", "Variant Beta", "Variant Gamma", "Variant Delta"]
+    variants = ["Variant Gamma"]
     years = ["2022", "2023", "2024"]
     methods = ["Pair", "ClustalW", "Genetic Algorithm"]
 
@@ -82,18 +83,18 @@ def main():
     #performance_df = data_stats.run_single_method_test(variant, year, "Genetic Algorithm")
     #performance_df = data_stats.run_single_method_test(variant, year, "Pair")
 
-    # performance_df = data_stats.run_comprehensive_tests(variants, years, methods)
-    # print(performance_df)
+    performance_df = data_stats.run_comprehensive_tests(variants, years, methods, 3, 0, 15)
+    print(performance_df)
 
-    # if performance_df is not None:
-    #     # Save the DataFrame to a CSV file
-    #     output_path = "performance_results.csv"
-    #     performance_df.to_csv(output_path, index=False)
-    #     print(f"Performance results saved to {output_path}")
-    # else:
-    #     print("No performance data to save.")
+    if performance_df is not None:
+        # Save the DataFrame to a CSV file
+        output_path = "performance_results_gamma.csv"
+        performance_df.to_csv(output_path, index=False)
+        print(f"Performance results saved to {output_path}")
+    else:
+        print("No performance data to save.")
 
-    csv_file_path = "performance_results.csv"
+    csv_file_path = "performance_results_15.csv"
     visualize_performance(csv_file_path)
     
     
